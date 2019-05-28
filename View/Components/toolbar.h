@@ -1,43 +1,42 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
-
 #include <QWidget>
 #include <QMenuBar>
 
-/*
- *  ToolBar sottoclasse di QMenuBar
+/**
+ * @brief The ToolBar class
  *
- *  Contiene le azioni generali per la gestione dello spostamento tra viste
- *  e la gestione del caricamento/salvataggio su XML
- *
+ * Estende da QMenuBar,
+ * ToolBar dell'utility
  */
-
 class ToolBar : public QMenuBar{
 private:
     Q_OBJECT
     QWidget* parent;
 
     QMenu* file;
-    QMenu* help;
-
+    QAction* help;
     QAction* newArray;
     QAction* deleteArray;
     QAction* loadFromXml;
     QAction* saveToXml;
+    QAction* saveAsToXml;
 
 public:
     explicit ToolBar(QWidget* = nullptr);
 
     QMenu *getFile() const;
-    QMenu *getHelp() const;
+    QAction *getHelp() const;
     QAction *getNewArray() const;
     QAction *getDeleteArray() const;
     QAction *getLoadFromXml() const;
     QAction *getSaveToXml() const;
+    QAction *getSaveAsToXml() const;
 
-signals:
+private slots:
 
-public slots:
+    void about() const;
+
 };
 
 #endif // TOOLBAR_H

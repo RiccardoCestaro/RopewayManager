@@ -1,28 +1,31 @@
 #include "View/Components/viewropeway.h"
+#include "Model/Gerarchia/Utils/tipologia.h"
+
 #include <QLabel>
 #include <QHeaderView>
 
-
-
+/**
+ * @brief ViewRopeway::ViewRopeway
+ * @param parent
+ * @param i
+ *
+ * Costruttore della classe ViewRopeway
+ */
 ViewRopeway::ViewRopeway(QWidget *parent, InsertRopeway* i) :
-    QWidget(parent){
+    QWidget(parent),
+    searchType(new QComboBox(this)),
+    searchManufacters(new QComboBox(this)),
+    proxymodel(new ProxyModel(parent,searchType,searchManufacters)),
+    model(new ModelAdapter(parent,i)),
+    view(new TableView(this,true)),
+    removeButton(new QPushButton("Rimuovi",this)),
+    showAllSpec(new QPushButton("Visualizza",this)){
 
-    view = new TableView(this,true);
-    model = new QTableModelAdapter(parent,i);
 
-    proxymodel = new QFilterProxyModel(parent,searchType,searchManufacters);
-
-
-    //PULSANTI
-    showAllSpec = new QPushButton("Visualizza",this);
     showAllSpec->setToolTip(tr("See more info about the selected item"));
-
-    removeButton = new QPushButton("Rimuovi",this);
     removeButton->setToolTip(tr("Remove the selected  item"));
 
-//LAYOUT
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    // Searchbar sottolayout
     QHBoxLayout* searchLayout = new QHBoxLayout();
 
     QLabel* searchTypeLabel = new QLabel(this);
@@ -31,14 +34,11 @@ ViewRopeway::ViewRopeway(QWidget *parent, InsertRopeway* i) :
     searchTypeLabel->setText("Filtra per tipologia:");
     searchManufacterLabel->setText("Filtra per produttore: ");
 
-    searchType = new QComboBox(this);
-    searchManufacters = new QComboBox(this);
-
     searchType->addItem("Tutto");
-    searchType->addItems(InsertRopeway::typeOfLift);
+    searchType->addItems(Tipologia::values);
 
     searchManufacters->addItem("Tutto");
-    searchManufacters->addItems(InsertRopeway::manufacters);
+    searchManufacters->addItems(Produttore::values);
 
     searchLayout->addWidget(searchTypeLabel,0,Qt::AlignRight);
     searchLayout->addWidget(searchType,0,Qt::AlignLeft);
@@ -46,56 +46,86 @@ ViewRopeway::ViewRopeway(QWidget *parent, InsertRopeway* i) :
     searchLayout->addWidget(searchManufacterLabel,0,Qt::AlignRight);
     searchLayout->addWidget(searchManufacters,0,Qt::AlignLeft);
 
-
     QHBoxLayout* buttonsLayout = new QHBoxLayout();
     buttonsLayout->addWidget(showAllSpec);
     buttonsLayout->addWidget(removeButton);
 
     mainLayout->addLayout(searchLayout, 50);
 
-
     mainLayout->addWidget(view, 0, Qt::AlignCenter);
-    mainLayout->addLayout(buttonsLayout, 50); // stretch = 50 per distanziare i bottoni
-
+    mainLayout->addLayout(buttonsLayout, 50);
 }
 
-
+/**
+ * @brief ViewRopeway::getView
+ * @return view
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna la TableView view
+ */
 TableView *ViewRopeway::getView() const{
     return view;
 }
 
-QLineEdit *ViewRopeway::getSearchbar() const{
-    return searchbar;
-}
-
-QFilterProxyModel *ViewRopeway::getProxymodel() const{
+/**
+ * @brief ViewRopeway::getProxymodel
+ * @return proxymodel
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna il ProxyModel proxymodel
+ */
+ProxyModel *ViewRopeway::getProxymodel() const{
     return proxymodel;
 }
 
-QTableModelAdapter *ViewRopeway::getModel() const{
+/**
+ * @brief ViewRopeway::getModel
+ * @return model
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna la ModelAdapter model
+ */
+ModelAdapter *ViewRopeway::getModel() const{
     return model;
 }
 
+/**
+ * @brief ViewRopeway::getRemoveButton
+ * @return removeButton
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna il QPushButton removeButton
+ */
 QPushButton *ViewRopeway::getRemoveButton() const{
     return removeButton;
 }
 
+/**
+ * @brief ViewRopeway::getShowAllSpec
+ * @return showAllSpec
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna il QPushButton showAllSpec
+ */
 QPushButton *ViewRopeway::getShowAllSpec() const{
     return showAllSpec;
 }
 
-
-/*
- * IMPOSTA IL PROXYMODEL ALLA TABELLA DOPO IL CARICAMENTO DEI DATI VIA XML
- * E VISUALIZZA TUTTO IL CONTAINER APPENA RIEMPITO
+/**
+ * @brief ViewRopeway::updateTable
  *
+ * Metodo pubblico:
+ * La tabella viene completamente ricaricata,
+ * quindi viene ricaricato il modello e il proxyModel
+ *
+ * Inoltre vengono impostate le dimensioni delle colonne,
+ * e l'altezza delle righe
  */
 void ViewRopeway::updateTable() const{
     proxymodel->setSourceModel(model);
     view->setModel(proxymodel);
     proxymodel->setFilterKeyColumn(-1);
 
-    /* Imposta la larghezza delle singole colonne */
     view->setColumnWidth(0,85);
     view->setColumnWidth(1,175);
     view->setColumnWidth(2,125);
@@ -108,14 +138,24 @@ void ViewRopeway::updateTable() const{
         view->setRowHeight(i,40);
 }
 
-/*
+/**
+ * @brief ViewRopeway::getSearchList
+ * @return searchType
  *
- * GETTERS PER RITORNARE I DUE COMBOBOX PER IL FILTERING
- *
+ * Metodo pubblico:
+ * Metodo getter che ritorna la QComboBox serchType
  */
 QComboBox *ViewRopeway::getSearchList() const{
     return searchType;
 }
+
+/**
+ * @brief ViewRopeway::getSearchManufacters
+ * @return searchManufacters
+ *
+ * Metodo pubblico:
+ * Metodo getter che ritorna la QComboBox searchManufacters
+ */
 QComboBox *ViewRopeway::getSearchManufacters() const{
     return searchManufacters;
 }

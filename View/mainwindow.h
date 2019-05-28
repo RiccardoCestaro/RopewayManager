@@ -6,50 +6,42 @@
 #include "Components/toolbar.h"
 #include "Components/viewropeway.h"
 #include "Components/insertropeway.h"
+#include "Components/tabbar.h"
 
-class Model; // definizioni incomplete
-class TableView;
-class QTableModelAdapter;
-class QLineEdit;
-class QFilterProxyModel;
-class QCloseEvent;
-class QComboBox;
-
+/**
+ * @brief The MainWindow class
+ *
+ * View: vista padre dell'utility
+ */
 class MainWindow : public QWidget {
     Q_OBJECT
 public:
     explicit MainWindow(QWidget* parent = nullptr, bool load=true, int offset=0);
-    ~MainWindow() override = default;// NB: non distrugge i QWidget (di quello se ne occupa Qt)
-    QSize sizeHint() const override;
 protected:
     virtual void closeEvent (QCloseEvent *event) override;
 private:
+
     int offset;
     ToolBar* toolbar;
-    QTabBar* tabbar;
+    TabBar* tabbar;
     InsertRopeway* insertPage;
     ViewRopeway* viewPage;
 
     QString fileName;
-
     static QStringList typeOfLift;
 
-
-
-private slots:
     void showInsertPage() const;
     void showViewPage() const;
 
-    void showPage(int) const;
+private slots:
 
-    void newBeauty() const;
-    void loadNewBeauty() const ;
-    void saveData() ; //potrebbe modificare il WindowTitle perché chiama saveAsData
+    void showPage(int) const;
+    void newManager() const;
+    void deleteArray();
+    void saveData();
     void loadData();
     void saveAsData();
     void showMore() const;
-    //void use();
-    //void useResults() const;
     void add() const;
     void remove() const;
     void removeResults() const;

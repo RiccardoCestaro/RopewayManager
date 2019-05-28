@@ -8,6 +8,12 @@
 #include "Model/Gerarchia/funivia.h"
 #include "Model/Gerarchia/funicolare.h"
 
+#include "Model/Gerarchia/Utils/ammorsamento.h"
+#include "Model/Gerarchia/Utils/gancio.h"
+#include "Model/Gerarchia/Utils/produttore.h"
+#include "Model/Gerarchia/Utils/tecbin.h"
+#include "Model/Gerarchia/Utils/tipologia.h"
+
 #include <QDate>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -22,23 +28,27 @@
 #include <QDesktopWidget>
 #include <QBuffer>
 
+/**
+ * @brief ShowAllSpec::ShowAllSpec
+ * @param _p
+ * @param b
+ * @param e
+ * @param parent
+ *
+ * Costruttore della classe ShowAllSPec
+ */
+ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e, QWidget* parent) :
+    QWidget(parent),
+    p(_p),
+    begin(b),
+    end(e),
+    imageString(QString()){
 
-ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e, QWidget* parent) : QWidget(parent),p(_p), begin(b), end(e),imageString(QString()){
+    this->setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,this->size(),qApp->desktop()->availableGeometry()));
 
-    this->setGeometry(
-        QStyle::alignedRect(
-            Qt::LeftToRight,
-            Qt::AlignCenter,
-            this->size(),
-            qApp->desktop()->availableGeometry()
-        )
-    );
-
-
-
-    setWindowTitle(tr(p->getNome().c_str())); //titolo applicazione
-    setWindowIcon(QIcon(":/icon.svg")); // icona del programma
-    setFixedSize(QSize(850,500)); //dimensione fissa non ridimensionabile
+    setWindowTitle(tr(p->getNome().c_str()));
+    setWindowIcon(QIcon(":/icon.svg"));
+    setFixedSize(QSize(850,500));
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     QHBoxLayout* typeLayout = new QHBoxLayout();
@@ -129,9 +139,8 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
     formLayout->addRow(new QLabel("Capienza veicoli: "),spinCapacity);
 
     manufacters = new QComboBox(this);
-    manufacters->addItems(QStringList({"Leitner", "Doppelmayr", "Agudio", "Zemella", "Graffer", "Agamatic", "Poma", "Nascivera",
-                                       "Bartholet", "Garaventa","Hölzl", "Marchisio", "Ceretti Tanfani"}));
-    manufacters->setCurrentText(QString::fromStdString(p->getProduttore()));
+    manufacters->addItems(QStringList(Produttore::values));
+    manufacters->setCurrentText(QString::fromStdString(p->getProduttore().toString()));
     formLayout->addRow(new QLabel("Produttore: "),manufacters);
 
     spinHeightValley = new QSpinBox(this);
@@ -167,8 +176,7 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
         MovimentazioneContinua* mc = static_cast<MovimentazioneContinua*>(p);
 
         comboDetachable = new QComboBox(this);
-        comboDetachable->addItem("fisso");
-        comboDetachable->addItem("automatico");
+        comboDetachable->addItems(Ammorsamento::values);
 
         comboDetachable->setCurrentText(QString::fromStdString(mc->getAmmorsamento().toString()));
         formLayout->addRow(new QLabel("Ammorsamento: "),comboDetachable);
@@ -203,7 +211,7 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
             Sciovia* s = static_cast<Sciovia*>(p);
 
             comboHook = new QComboBox(this);
-            comboHook->addItems(QStringList({"ancora","piattello"}));
+            comboHook->addItems(Gancio::values);
             comboHook->setCurrentText(QString::fromStdString(s->getGancio().toString()));
             formLayout->addRow(new QLabel("Gancio: "),comboHook);
 
@@ -230,7 +238,7 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
             Funicolare* f = static_cast<Funicolare*>(p);
 
             comboTecBin = new QComboBox(this);
-            comboTecBin->addItems(QStringList({"Doppio","Unico"}));
+            comboTecBin->addItems(TecBin::values);
             comboTecBin->setCurrentText(QString::fromStdString(f->getTecBinario().toString()));
             formLayout->addRow(new QLabel("Tecnica Binari: "),comboTecBin);
         }
@@ -303,33 +311,46 @@ void ShowAllSpec::saveSettings(){
             f->setTecBinario(comboTecBin->currentText().toStdString());
         }
     }
-
-
     emit dataChanged(begin, end);
     this->close();
 }
 
-
+/**
+ * @brief ShowAllSpec::slotEditValleyMetres
+ *
+ * Slot privato:
+ * consente di sincronizzare l'altitudine della stazione
+ * di monte con l'altitudine della stazione di valle
+ */
 void ShowAllSpec::slotEditValleyMetres() const{
     spinHeightMountain->setValue(spinHeightValley->value());
     spinHeightMountain->setMinimum(spinHeightValley->value());
 }
 
+/**
+ * @brief ShowAllSpec::slotLoadPhoto
+ *
+ * Slot privato:
+ * consente di scegliere e caricare un immagine
+ * di tipo JPG o PNG
+ */
 void ShowAllSpec::slotLoadPhoto(){
    imageString = QFileDialog::getOpenFileName(this,tr("Selezione l'immagine: "), "",tr("JPG (*.jpg);;PNG (*.png);;All Files (*)"));
-
    if (!imageString.isEmpty()){
         savePhoto = QImage(imageString);
-
         imageBytes = QByteArray();
         QBuffer buffer(&imageBytes);
-
         savePhoto.save(&buffer,"JPG");
-
         image->setPixmap(QPixmap::fromImage(savePhoto));
    }
 }
 
+/**
+ * @brief ShowAllSpec::slotRemoveImage
+ *
+ * Slot privato:
+ * rimuove l'immagine
+ */
 void ShowAllSpec::slotRemoveImage(){
     image->clear();
     imageString = "NoImage";

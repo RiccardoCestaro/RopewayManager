@@ -1,65 +1,87 @@
 #include "Model/Gerarchia/telemix.h"
+#include "Model/Gerarchia/Utils/produttore.h"
 
-/*
+/**
+ * @brief Telemix::Telemix
+ *
+ * Costruttore della classe Telemix,
+ * effettua dei controlli sui campi
+ *
  * L'ammorsamento di una telemix e' sempre automatico
  * ed il numero di funi e' sempre pari a 1
  */
-
-Telemix::Telemix(const unsigned short& i, const string& img, const string& nm, const short& cs,const short& cc, const unsigned int& qv, const unsigned int& qm, const double& pm,
-                 const float& ve, const string& pro, const short& ac, const bool& c, const bool& as) :
-    MovimentazioneContinua (i,img,nm,cs,qv,qm,pm,ve,pro,ac,string("automatico")),
-            Seggiovia(i,img,nm,cs,qv,qm,pm,ve,pro,ac,string("automatico"),c,as), Cabinovia(i,img,nm,cc,qv,qm,pm,ve,pro,ac,string("automatico"),1)
-{
-    /* da valutare se aggiungere eccezioni */
-    /* esegue dei controlli sui campi */
+Telemix::Telemix(const unsigned short& i, const string& img, const string& nm, const short& cs,const short& cc, const unsigned int& qv,
+                 const unsigned int& qm, const double& pm, const float& ve, const Produttore& pro, const short& ac, const bool& c, const bool& as) :
+            Seggiovia(i,img,nm,cs,qv,qm,pm,ve,pro,ac,string("automatico"),c,as), Cabinovia(i,img,nm,cc,qv,qm,pm,ve,pro,ac,string("automatico"),1){
     if(getVelocitaEsercizio() > Seggiovia::velocitaEsercizioAutomaticoMax) setVelocitaEsercizio(-1);
 }
 
-
-/* metodo di clonazione polimorfa */
+/**
+ * @brief Telemix::clone
+ * @return Telemix pointer
+ */
 Telemix* Telemix::clone() const{
     return new Telemix(*this);
 }
-/* metodo per il ritorno del tipo di impianto */
+
+/**
+ * @brief Telemix::getType
+ * @return std::string "telemix"
+ */
 string Telemix::getType() const{
     return "telemix";
 }
 
-
-/* Getters e Setters per l'ottenimento e la modifica dei campi della classe seggiovia */
+/**
+ * @brief Telemix::getCapienzaCabina
+ * @return capienzaCabina
+ */
 short Telemix::getCapienzaCabina() const{
     return capienzaCabina;
 }
-void Telemix::setCapienzaCabina(const short& value){
-    capienzaCabina = value;
+
+/**
+ * @brief Telemix::setCapienzaCabina
+ * @param cc
+ */
+void Telemix::setCapienzaCabina(const short& cc){
+    capienzaCabina = cc;
 }
 
-/* vedere se mantenere */
-unsigned int Telemix::PortataOraria() const{
-    return 0;
-}
-
-/* Deserializzazione */
-Telemix *Telemix::read(QXmlStreamReader* reader){
-
-    Impianto::values* r = Impianto::read(reader);
-
+/**
+ * @brief Telemix::build
+ * @param reader
+ * @param r
+ * @return Telemix pointer
+ *
+ * metodo che si occupa di costruire un oggetto di classe Telemix
+ * deserializzando un file in formato XML
+ * Il metodo viene chiamato dalla classe base, dalla quale vengono
+ * passati i valori radicati nella classe base.
+ * inoltre ritorna un puntatore all'oggetto appena costruito
+ */
+Telemix *Telemix::build(QXmlStreamReader* reader,const values* r){
     short capienzaCabina;
     bool copertura;
     bool appoggiaSci;
-
     if(reader->readNextStartElement() && reader->name()=="CapienzaCabina")
         capienzaCabina = reader->readElementText().toShort();
     if(reader->readNextStartElement() && reader->name()=="Copertura")
         copertura = reader->readElementText().toInt();
     if(reader->readNextStartElement() && reader->name()=="AppoggiaSci")
         appoggiaSci = reader->readElementText().toInt();
-
     return new Telemix(r->id,r->immagine,r->nome,r->capienzaVeicolo,capienzaCabina,r->quotaValle,r->quotaMonte,r->potenzaMotore,r->velocitaEsercizio,
                        r->produttore,r->annoCostruzione,copertura,appoggiaSci);
-
 }
-/* Serializzazione */
+
+/**
+ * @brief Telemix::write
+ * @param writer
+ *
+ * permette la serializzazione in XML di un oggetto di classe telemix
+ * richiama il metodo write delle classi superiori per aumentare
+ * l'estendibilita' del codice
+ */
 void Telemix::write(QXmlStreamWriter* writer) const{
     MovimentazioneContinua::write(writer);
     writer->writeStartElement("CapienzaCabina");
@@ -70,6 +92,7 @@ void Telemix::write(QXmlStreamWriter* writer) const{
     writer->writeEndElement();
     writer->writeStartElement("AppoggiaSci");
     writer->writeCharacters(QString::number(hasAppoggiaSci()));
+    writer->writeEndElement();
     writer->writeEndElement();
 }
 

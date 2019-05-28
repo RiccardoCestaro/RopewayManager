@@ -14,12 +14,17 @@
 #include "Model/Gerarchia/impianto.h"
 #include "Model/Gerarchia/movimentazionecontinua.h"
 
+/**
+ * @brief The ShowAllSpec class
+ *
+ * View: grafica relativa alla visualizzazione e modifica dell'impianto
+ */
 class ShowAllSpec : public QWidget{
 
 private:
     Q_OBJECT
     Impianto* p;
-    const QModelIndex begin; //riga del view che sta modificando
+    const QModelIndex begin;
     const QModelIndex end;
     QLabel* tipo;
     QLabel* image;
@@ -50,6 +55,7 @@ public:
 
 signals:
     void dataChanged(const QModelIndex&, const QModelIndex&);
+
 private slots:
     void saveSettings();
     void slotEditValleyMetres() const;

@@ -1,4 +1,9 @@
 #include "insertropeway.h"
+#include "Model/Gerarchia/Utils/tipologia.h"
+#include "Model/Gerarchia/Utils/ammorsamento.h"
+#include "Model/Gerarchia/Utils/produttore.h"
+#include "Model/Gerarchia/Utils/tecbin.h"
+#include "Model/Gerarchia/Utils/gancio.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -7,18 +12,9 @@
 #include <iostream>
 #include <QBuffer>
 
-QStringList InsertRopeway::manufacters = {"Leitner", "Doppelmayr", "Agudio", "Zemella", "Graffer", "Agamatic", "Poma", "Nascivera",
-                             "Bartholet", "Garaventa","Hölzl", "Marchisio", "Ceretti Tanfani"};
-
-QStringList InsertRopeway::typeOfLift = {"Seggiovia","Cabinovia","Telemix","Sciovia","Funivia","Funifor","Funicolare"};
-
 
 InsertRopeway::InsertRopeway(QWidget *parent) :
     QWidget(parent),
-    mainLayout(new QVBoxLayout(this)),
-    insertLayout(new QHBoxLayout()),
-    photoLayout(new QVBoxLayout()),
-    formLayout(new QFormLayout()),
     type(new QLabel(this)),
     name(new QLabel(this)),
     id(new QLabel(this)),
@@ -40,9 +36,6 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     cabinCapacity(new QLabel(this)),
     editName(new QLineEdit(this)),
     addItem(new QPushButton(this)),
-    comboType(new QComboBox(this)),
-    comboManufacter(new QComboBox(this)),
-    comboDetachable(new QComboBox(this)),
     spinCapacity(new QSpinBox(this)),
     spinId(new QSpinBox(this)),
     spinHeightValley(new QSpinBox(this)),
@@ -50,26 +43,32 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     spinEnginePower(new QSpinBox(this)),
     spinDrivingSpeedLine(new QSpinBox(this)),
     spinYearOfConstruction(new QSpinBox(this)),
-    checkBoxSkiRests(new QCheckBox(this)),
-    checkBoxCoverage(new QCheckBox(this)),
-    comboHook(new QComboBox(this)),
     spinRopeNumber(new QSpinBox(this)),
     spinCabinCapacity(new QSpinBox(this)),
     spinTime(new QSpinBox(this)),
+    checkBoxSkiRests(new QCheckBox(this)),
+    checkBoxCoverage(new QCheckBox(this)),
+    comboHook(new QComboBox(this)),
+    comboType(new QComboBox(this)),
+    comboManufacter(new QComboBox(this)),
+    comboDetachable(new QComboBox(this)),
     comboCabinNumber(new QComboBox(this)),
     comboTecBin(new QComboBox(this)),
-    photoString(QString()),
-    imageLabel(new QLabel(this)){
+    photoString(QString()){
+
+    mainLayout = new QVBoxLayout(this);
+    insertLayout = new QHBoxLayout();
+    photoLayout = new QVBoxLayout();
+    formLayout = new QFormLayout();
 
     type -> setText("Type: ");
-    comboType -> addItems(typeOfLift);
+    comboType -> addItems(Tipologia::values);
 
     id -> setText("Id:");
     spinId->setRange(0,999);
 
-
     name -> setText("Nome:");
-    /* Creating validator for QLineEdit using regex*/
+    /** Crea un validatore per QLineEdit usando regex*/
     QRegExp rx("(\\w+\\s)+");
     QRegExpValidator *validator = new QRegExpValidator(rx, this);
     editName->setValidator(validator);
@@ -79,7 +78,7 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     spinCapacity->setRange(1,200);
 
     manufacter -> setText("Produttore:");
-    comboManufacter -> addItems(manufacters);
+    comboManufacter -> addItems(Produttore::values);
 
     heightValley -> setText("Altezza stazione di valle:");
     spinHeightValley -> setRange(0,8000);
@@ -100,74 +99,57 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     spinEnginePower->setRange(50,2000);
     spinEnginePower->setSuffix("kW");
 
-    /*
-     * Movimentazione continua
-     */
+    /** Movimentazione continua */
     detachT -> setText("Ammorsamento:");
-    comboDetachable -> addItem("Automatico");
-    comboDetachable -> addItem("Fisso");
+    comboDetachable -> addItems(Ammorsamento::values);
 
-    /*
-     * Seggiovia
-     */
+    /** Seggiovia */
     skiRests->setText("Appoggia sci:");
     checkBoxSkiRests->setChecked(true);
     coverage->setText("Copertura:");
 
-    /*
-     * Cabinovia
-     */
+    /** Cabinovia */
     ropeNumber->setText("Numero funi:");
     spinRopeNumber->setRange(1,3);
     ropeNumber->hide();
     spinRopeNumber->hide();
-    /*
-     * Sciovia
-     */
+    
+    /** Sciovia */
     hook -> setText("Gancio:");
-    comboHook -> addItem("Ancora");
-    comboHook -> addItem("Piattello");
+    comboHook -> addItems(Gancio::values);
     hook->hide();
     comboHook->hide();
-    /*
-     * Telemix
-     */
+    
+    /** Telemix */
     cabinCapacity -> setText("Capienza Cabine: ");
     spinCabinCapacity -> setRange( 6,18 );
     cabinCapacity -> hide();
     spinCabinCapacity -> hide();
-    /*
-     * VaeVieni
-     */
+    
+    /** VaeVieni */
     time -> setText("Tempo attesa: ");
     spinTime -> setRange( 0,3600 );
     spinTime -> setSuffix("s");
     time -> hide();
     spinTime -> hide();
-    /*
-     * Funifor
-     */
+    
+    /** Funifor */
     funiforCabinNumber -> setText( "Numero Cabine: ");
     comboCabinNumber -> addItem("Una");
     comboCabinNumber -> addItem("Due");
     funiforCabinNumber -> hide();
     comboCabinNumber -> hide();
-    /*
-     * Funicolare
-     */
+    /** Funicolare */
     tecBin -> setText("Tecnica binario:" );
     comboTecBin -> addItem("Doppio");
     comboTecBin -> addItem("Unico");
     tecBin -> hide();
     comboTecBin -> hide();
 
-
     addItem->setText("Aggiungi Impianto");
-
-
+    addItem->setFixedHeight(50);
+    mainLayout->setAlignment(Qt::AlignCenter);
     mainLayout -> addLayout(insertLayout);
-
-
     insertLayout -> addLayout(formLayout);
     formLayout -> setAlignment(Qt::AlignLeft);
 
@@ -175,7 +157,6 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     formLayout -> addRow(id,spinId);
     formLayout -> addRow(name,editName);
     formLayout -> addRow(capacity,spinCapacity);
-    /* Telemix */
     formLayout -> addRow(cabinCapacity,spinCabinCapacity);
     formLayout -> addRow(manufacter,comboManufacter);
     formLayout -> addRow(heightValley,spinHeightValley);
@@ -183,42 +164,17 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     formLayout -> addRow(drivingSpeedLine,spinDrivingSpeedLine);
     formLayout -> addRow(yearOfConstruction,spinYearOfConstruction);
     formLayout -> addRow(enginePower,spinEnginePower);
-
-    //continue
-
     formLayout -> addRow(detachT,comboDetachable);
-
-    //chairlift
-
     formLayout -> addRow(skiRests,checkBoxSkiRests);
     formLayout -> addRow(coverage,checkBoxCoverage);
-
-    //gondola lift
-
     formLayout -> addRow(ropeNumber,spinRopeNumber);
-
-    //skilift
-
     formLayout -> addRow(hook,comboHook);
-
-    /* Pulsee */
-
     formLayout -> addRow(time,spinTime);
-
-    //funicolar
-
     formLayout -> addRow(tecBin,comboTecBin);
-
-    //funifor
-
     formLayout -> addRow(funiforCabinNumber,comboCabinNumber);
-
-
-    //aerial tramway
 
     insertLayout -> addLayout(photoLayout);
     photoLayout -> setAlignment(Qt::AlignRight);
-
 
     QPushButton* loadPhoto = new QPushButton(this);
     loadPhoto ->setFixedSize(150,50);
@@ -232,6 +188,7 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
 
     QWidget* borders = new QWidget(this);
     borders->setFixedSize(500,400);
+    imageLabel = new QLabel(this);
     imageLabel->setParent(borders);
     imageLabel->setFixedSize(450,350);
     imageLabel->setAlignment(Qt::AlignCenter);
@@ -239,127 +196,218 @@ InsertRopeway::InsertRopeway(QWidget *parent) :
     imageLabel->setScaledContents(true);
     imageLabel->setStyleSheet("QLabel {border: 1px solid white;border-radius: 2px;background-color: gray;padding: 5px 5px 5px 5px;}");
 
-
     photoLayout->addWidget(borders);
-
     mainLayout -> addWidget(addItem);
 
     connect(comboType,SIGNAL(currentIndexChanged(int)),this,SLOT(slotEditType()));
     connect(spinHeightValley,SIGNAL(valueChanged(int)),this,SLOT(slotEditValleyMetres()));
     connect(loadPhoto,SIGNAL(clicked()),this,SLOT(slotLoadPhoto()));
-
 }
 
-
-
-
+/**
+ * @brief InsertRopeway::getEditManufacter
+ * @return comboManufacter
+ */
 QComboBox *InsertRopeway::getEditManufacter() const{
     return comboManufacter;
 }
 
+/**
+ * @brief InsertRopeway::getEditName
+ * @return editName
+ */
 QLineEdit *InsertRopeway::getEditName() const{
     return editName;
 }
 
+/**
+ * @brief InsertRopeway::getComboDetachable
+ * @return comboDetachable
+ */
 QComboBox *InsertRopeway::getComboDetachable() const{
     return comboDetachable;
 }
 
+/**
+ * @brief InsertRopeway::getAddItem
+ * @return addItem
+ */
 QPushButton *InsertRopeway::getAddItem() const{
     return addItem;
 }
 
+/**
+ * @brief InsertRopeway::getSpinId
+ * @return spinId
+ */
 QSpinBox *InsertRopeway::getSpinId() const{
     return spinId;
 }
 
+/**
+ * @brief InsertRopeway::getSpinHeightValley
+ * @return spinHeightValley
+ */
 QSpinBox *InsertRopeway::getSpinHeightValley() const{
     return spinHeightValley;
 }
 
+/**
+ * @brief InsertRopeway::getSpinHeightMountain
+ * @return spinHeightMountain
+ */
 QSpinBox *InsertRopeway::getSpinHeightMountain() const{
     return spinHeightMountain;
 }
+
+/**
+ * @brief InsertRopeway::getSpinCapacity
+ * @return spinCapacity
+ */
 QSpinBox *InsertRopeway::getSpinCapacity() const{
     return spinCapacity;
 }
 
+/**
+ * @brief InsertRopeway::getSpinEnginePower
+ * @return spinEnginePower
+ */
 QSpinBox *InsertRopeway::getSpinEnginePower() const{
     return spinEnginePower;
 }
 
+/**
+ * @brief InsertRopeway::getSpinDrivingSpeedLine
+ * @return spinDrivingSpeedLine
+ */
 QSpinBox *InsertRopeway::getSpinDrivingSpeedLine() const{
     return spinDrivingSpeedLine;
 }
 
+/**
+ * @brief InsertRopeway::getSpinYearOfConstruction
+ * @return spinYearOfConstruction
+ */
 QSpinBox *InsertRopeway::getSpinYearOfConstruction() const{
     return spinYearOfConstruction;
 }
 
+/**
+ * @brief InsertRopeway::getCheckBoxSkiRests
+ * @return checkBoxSkiRests
+ */
 QCheckBox *InsertRopeway::getCheckBoxSkiRests() const{
     return checkBoxSkiRests;
 }
 
+/**
+ * @brief InsertRopeway::getCheckBoxCoverage
+ * @return checkBoxCoverage
+ */
 QCheckBox *InsertRopeway::getCheckBoxCoverage() const{
     return checkBoxCoverage;
 }
 
+/**
+ * @brief InsertRopeway::getComboHook
+ * @return comboHook
+ */
 QComboBox *InsertRopeway::getComboHook() const{
     return comboHook;
 }
 
+/**
+ * @brief InsertRopeway::getSpinRopeNumber
+ * @return spinRopeNumber
+ */
 QSpinBox *InsertRopeway::getSpinRopeNumber() const{
     return spinRopeNumber;
 }
 
+/**
+ * @brief InsertRopeway::getSpinTime
+ * @return spinTime
+ */
 QSpinBox *InsertRopeway::getSpinTime() const{
     return spinTime;
 }
 
+/**
+ * @brief InsertRopeway::getComboCabinNumber
+ * @return comboCabinNumber
+ */
 QComboBox *InsertRopeway::getComboCabinNumber() const{
     return comboCabinNumber;
 }
 
+/**
+ * @brief InsertRopeway::getComboTecBin
+ * @return comboTecBin
+ */
 QComboBox *InsertRopeway::getComboTecBin() const{
     return comboTecBin;
 }
 
+/**
+ * @brief InsertRopeway::getSpinCabinCapacity
+ * @return spinCabinCapacity
+ */
 QSpinBox *InsertRopeway::getSpinCabinCapacity() const{
     return spinCabinCapacity;
 }
 
-
+/**
+ * @brief InsertRopeway::getImage
+ * @return image
+ */
 QImage InsertRopeway::getImage() const{
     return image;
 }
 
-
+/**
+ * @brief InsertRopeway::getCurrentType
+ * @return comboType->currentText()
+ */
 QString InsertRopeway::getCurrentType() const{
     return comboType->currentText();
 }
 
+/**
+ * @brief InsertRopeway::getPhoto
+ * @return photoString
+ */
 QString InsertRopeway::getPhoto() const{
     return photoString;
 }
 
+/**
+ * @brief InsertRopeway::getImageBytes
+ * @return imageBytes
+ */
 QByteArray InsertRopeway::getImageBytes() const{
     return imageBytes;
 }
 
-/*
- *  syncronize valley metres with mountain metres
+/**
+ * @brief InsertRopeway::slotEditValleyMetres
  *
+ * Slot privato:
+ * consente di sincronizzare l'altitudine della stazione
+ * di monte con l'altitudine della stazione di valle
  */
 void InsertRopeway::slotEditValleyMetres() const{
     spinHeightMountain->setValue(spinHeightValley->value());
     spinHeightMountain->setMinimum(spinHeightValley->value());
 }
 
-
+/**
+ * @brief InsertRopeway::defaultForm
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi come da default
+ */
 void InsertRopeway::defaultForm() const{
-    std::cout << formLayout->rowCount() << std::endl;
-
-
     detachT->hide();
     comboDetachable->hide();
     coverage->hide();
@@ -383,23 +431,50 @@ void InsertRopeway::defaultForm() const{
     capacity -> setText("Capienza veicolo: ");
 }
 
-
+/**
+ * @brief InsertRopeway::showContinue
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di un impianto a movimentazione continua
+ */
 void InsertRopeway::showContinue() const{
     detachT->show();
     comboDetachable->show();
 }
 
+/**
+ * @brief InsertRopeway::showPulsee
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di un impianto a movimentazione va e vieni
+ */
 void InsertRopeway::showPulsee() const{
     time -> show();
     spinTime -> show();
 }
 
+/**
+ * @brief InsertRopeway::showGondolaLift
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di Cabinovia
+ */
 void InsertRopeway::showGondolaLift() const{
     showContinue();
     ropeNumber -> show();
     spinRopeNumber -> show();
 }
 
+/**
+ * @brief InsertRopeway::showChairLift
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di seggiovia
+ */
 void InsertRopeway::showChairLift() const{
     showContinue();
     coverage->show();
@@ -408,6 +483,13 @@ void InsertRopeway::showChairLift() const{
     checkBoxSkiRests->show();
 }
 
+/**
+ * @brief InsertRopeway::showTelemix
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di Telemix
+ */
 void InsertRopeway::showTelemix() const{
     showContinue();
     detachT->hide();
@@ -423,6 +505,13 @@ void InsertRopeway::showTelemix() const{
     capacity -> setText("Capienza seggiole: ");
 }
 
+/**
+ * @brief InsertRopeway::showSkilift
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di Skilift
+ */
 void InsertRopeway::showSkilift() const{
     showContinue();
     comboHook->show();
@@ -433,26 +522,50 @@ void InsertRopeway::showSkilift() const{
     spinCapacity->hide();
 }
 
+/**
+ * @brief InsertRopeway::showFunifor
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di Funifor
+ */
 void InsertRopeway::showFunifor() const{
     showPulsee();
     funiforCabinNumber -> show();
     comboCabinNumber -> show();
     }
 
+/**
+ * @brief InsertRopeway::showAerialTramway
+ *
+ * Metodo privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi della funivia
+ */
 void InsertRopeway::showAerialTramway() const{
     showPulsee();
 }
 
+/**
+ * @brief InsertRopeway::showFunicolar
+ *
+ * Metodo Privato:
+ * visualizza i campi necessari ad inizializzare
+ * i campi di funicolare
+ */
 void InsertRopeway::showFunicolar() const{
     showPulsee();
     tecBin -> show();
     comboTecBin -> show();
 }
 
-
-
-
-
+/**
+ * @brief InsertRopeway::slotEditType
+ *
+ * Slot privato:
+ * consente di visualizzare i campi da inizializzare
+ * per il tipo di impianto scelto
+ */
 void InsertRopeway::slotEditType() const{
     defaultForm();
     QString type = comboType->currentText();
@@ -465,17 +578,22 @@ void InsertRopeway::slotEditType() const{
     else if ( type == "Funicolare") showFunicolar();
 }
 
+/**
+ * @brief InsertRopeway::slotLoadPhoto
+ *
+ * Slot privato:
+ * consente di scegliere e caricare un immagine
+ * di tipo JPG o PNG
+ */
 void InsertRopeway::slotLoadPhoto(){
    photoString = QFileDialog::getOpenFileName(this,tr("Selezione l'immagine: "), "",tr("JPG (*.jpg);;PNG (*.png);;All Files (*)"));
 
    if (!photoString.isEmpty()){
         image = QImage(photoString);
-
         imageBytes = QByteArray();
         QBuffer buffer(&imageBytes);
 
         image.save(&buffer,"JPG");
-
         imageLabel->setPixmap(QPixmap::fromImage(image));
    }
 }

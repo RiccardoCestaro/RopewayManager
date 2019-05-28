@@ -3,85 +3,85 @@
 #include <algorithm>
 #include <QDebug>
 
+/**
+ * @brief Model::saveToFile
+ * @param filename
+ *
+ * permette la serializzazione
+ */
 void Model::saveToFile(const std::string &filename) const {
-    XmlIO::write(contenitore,filename);
+    IO::write(contenitore,filename);
 }
 
+/**
+ * @brief Model::loadFromFile
+ * @param filename
+ *
+ * permette la deserializzazione
+ */
 void Model::loadFromFile(const std::string& filename) {
-    contenitore = XmlIO::read(filename);
+    contenitore = IO::read(filename);
 }
 
-unsigned int Model::count() const{
+/**
+ * @brief Model::getSize
+ * @return
+ *
+ * Ritorna la size del container
+ */
+unsigned int Model::getSize() const{
     return contenitore.size();
 }
 
+/**
+ * @brief Model::add
+ * @param bt
+ *
+ * Aggiunge un oggetto al container
+ */
 void Model::add(Impianto* bt){
     contenitore.push_back(DeepPtr<Impianto>(bt));
 }
+
+/**
+ * @brief Model::remove
+ * @param index
+ *
+ *  rimuove l'oggetto in posizione index
+ */
 void Model::remove(unsigned int index) {
     contenitore.erase(contenitore.begin()+static_cast<int>(index));
 }
+
+/**
+ * @brief Model::operator []
+ * @param i
+ * @return Impianto*
+ *
+ * ottenimento dell'oggetto in posizione i
+ */
 Impianto* Model::operator[](unsigned int i) const {
     return contenitore[i].operator->();
 }
-Impianto* Model::getRopeway(unsigned int i) const{ //ritorna l'elemento i del contenitore
-    return contenitore[i].operator->();
+
+/**
+ * @brief Model::getRopeway
+ * @param i
+ * @return Impianto*
+ *
+ * ottenimento sicuro dell'oggetto in posizione i
+ */
+Impianto* Model::getRopeway(unsigned int i) const{
+    return contenitore.at(i).operator->();
 }
-bool Model::use(unsigned int i){
-    return true;
-    //return contenitore[i]->use();
+
+/**
+ * @brief Model::erase
+ *
+ * richiama il metodo clear del container,
+ * che lo svuota
+ */
+void Model::erase(){
+    contenitore.clear();
 }
-void Model::useIndexes(const std::vector<unsigned int> &v){
-    unsigned int i=0;
-    unsigned int j=0;
-    auto last = v.back()<contenitore.size()?contenitore.begin()+v.back()+1:contenitore.end();
-    std::for_each(contenitore.begin(), last, [&i, &j, &v](const DeepPtr<Impianto>& x)
-    {
-        if(v[j]==i){
-            //x->use();
-            ++j;
-        }
-        ++i;
-    }
-    );
-}
-void Model::removeIndexes(const std::vector<unsigned int> &v){
-    unsigned int i=0;
-    unsigned int j=0;
-    std::copy_if(contenitore.begin(), contenitore.end(), contenitore.begin(), [&i, &j, &v](const DeepPtr<Impianto>&)->bool
-    {
-        bool toRemove = v[j]==i;
-        ++i;
-        if(toRemove)
-            ++j;
-        return !toRemove;
-    }
-    );
-    contenitore.erase(contenitore.end()-j, contenitore.end());
-}
-void Model::removeType(const std::string& s){
-    unsigned int j=0;
-    std::copy_if(contenitore.begin(), contenitore.end(), contenitore.begin(), [&j,&s](const DeepPtr<Impianto>& x)->bool
-    {
-        if(x->getType()==s){
-            j++;
-            return true;
-        }
-        return false;
-    }
-    );
-    contenitore.erase(contenitore.end()-j, contenitore.end());
-}
-void Model::removeBrand(const std::string& s){
-    unsigned int j=0;
-    std::copy_if(contenitore.begin(), contenitore.end(), contenitore.begin(), [&j,&s](const DeepPtr<Impianto>& x)->bool
-    {
-        if(x->getType()==s){
-            j++;
-            return true;
-        }
-        return false;
-    }
-    );
-    contenitore.erase(contenitore.end()-j, contenitore.end());
-}
+

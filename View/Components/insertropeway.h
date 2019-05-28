@@ -17,54 +17,53 @@
 #include "Model/deepptr.h"
 #include "Model/Gerarchia/impianto.h"
 
+/**
+ * @brief The InsertRopeway class
+ *
+ * View: grafica relativa all'inserimento di un impianto
+ */
 class InsertRopeway : public QWidget{
 private:
 
     Q_OBJECT
-    QVBoxLayout *mainLayout;
-    QHBoxLayout *insertLayout;
-    QVBoxLayout *photoLayout;
-
+    QVBoxLayout* mainLayout;
+    QHBoxLayout* insertLayout;
+    QVBoxLayout* photoLayout;
     QFormLayout* formLayout;
 
     QLabel *type, *name, *id,*capacity, *manufacter, *heightMountain, *heightValley,
-    *drivingSpeedLine, *yearOfConstruction, *enginePower,
-    *detachT, *numVehicles, *skiRests, *coverage,
-    *ropeNumber, *hook,*tecBin, *funiforCabinNumber, *time, *cabinCapacity;
+    *drivingSpeedLine, *yearOfConstruction, *enginePower,*detachT, *skiRests, 
+    *coverage,*ropeNumber, *hook,*tecBin, *funiforCabinNumber, *time, *cabinCapacity;
 
-    QLineEdit  *editName;
+    QLineEdit* editName;
     QPushButton* addItem;
 
-    QComboBox* comboType;
-    QComboBox* comboManufacter;
-    QComboBox* comboDetachable;
-    QSpinBox *spinCapacity;
-    QSpinBox *spinId;
-    QSpinBox *spinHeightValley, *spinHeightMountain;
-    QSpinBox *spinEnginePower;
-    QSpinBox *spinDrivingSpeedLine;
-    QSpinBox *spinYearOfConstruction;
-    QSpinBox *spinVehicles;
+    QSpinBox *spinCapacity, *spinId, *spinHeightValley, *spinHeightMountain, *spinEnginePower,
+    *spinDrivingSpeedLine, *spinYearOfConstruction, *spinRopeNumber, *spinCabinCapacity, *spinTime;
 
     QCheckBox *checkBoxSkiRests, *checkBoxCoverage;
-    QComboBox *comboHook;
-    QSpinBox *spinRopeNumber;
-    QSpinBox *spinCabinCapacity;
-    QSpinBox *spinTime;
-    QComboBox *comboCabinNumber;
-    QComboBox *comboTecBin;
 
+    QComboBox *comboHook, *comboType, *comboManufacter, *comboDetachable, *comboCabinNumber, *comboTecBin;
 
     QString photoString;
     QImage image;
     QByteArray imageBytes;
     QLabel* imageLabel;
 
+    void defaultForm() const;
+    void showContinue() const;
+    void showPulsee() const;
+    void showGondolaLift() const;
+    void showChairLift() const;
+    void showTelemix() const;
+    void showSkilift() const;
+    void showFunifor() const;
+    void showAerialTramway() const;
+    void showFunicolar() const;
 public:
 
     explicit InsertRopeway(QWidget *parent = nullptr);
     explicit InsertRopeway(DeepPtr<Impianto> lift, QWidget *parent = nullptr);
-
 
     QString getCurrentType() const;
     QComboBox *getEditManufacter() const;
@@ -90,24 +89,6 @@ public:
     QByteArray getImageBytes() const;
     QString getPhoto() const;
     QPushButton *getAddItem() const;
-
-    static QStringList manufacters, typeOfLift;
-
-
-    void defaultForm() const;
-    void showContinue() const;
-    void showPulsee() const;
-    void showGondolaLift() const;
-    void showChairLift() const;
-    void showTelemix() const;
-    void showSkilift() const;
-    void showFunifor() const;
-    void showAerialTramway() const;
-    void showFunicolar() const;
-
-
-
-
 
 public slots:
 

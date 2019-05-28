@@ -1,74 +1,101 @@
 #include "Model/Gerarchia/cabinovia.h"
+#include "Model/Gerarchia/Utils/ropewayutils.h"
 
-/* Inizializzazione dei campi statici */
+/**
+ * Campi dati statici che contengono valori massimi di velocita'
+ * e di funi di un impianto di tipo Cabinovia
+ */
 float Cabinovia::velocitaEsercizioAutomaticoMax = 7;
 float Cabinovia::velocitaEsercizioFissoMax = 2;
 short Cabinovia::numeroFuniMax = 3;
 
-
-Cabinovia::Cabinovia(const unsigned short& i,const string& img, const string& nm, const short& c, const unsigned int& qv, const unsigned int& qm, const double& pm, const float& ve,
-                     const string& pro, const short& ac, const Amm& a, const short& nf) : MovimentazioneContinua(i,img,nm,c,qv,qm,pm,ve,pro,ac,a), numeroFuni(nf)
-{
-    /* da valutare se aggiungere eccezioni */
-    /* esegue dei controlli sui campi */
+/**
+ * @brief Cabinovia::Cabinovia
+ *
+ * Costruttore della classe Cabinovia
+ * Esegue dei controlli sui campi, quali il
+ * numero di funi e la velocita' d'esercizio
+ */
+Cabinovia::Cabinovia(const unsigned short& i,const string& img, const string& nm, const short& c, const unsigned int& qv, const unsigned int& qm,
+                     const double& pm, const float& ve, const Produttore& pro, const short& ac, const Ammorsamento& a, const short& nf)
+                    : MovimentazioneContinua(i,img,nm,c,qv,qm,pm,ve,pro,ac,a), numeroFuni(nf){
     if (numeroFuni > 3 || numeroFuni < 1) numeroFuni = -1;
-    if(Impianto::compareString(getAmmorsamento().toString(),"fisso") && getVelocitaEsercizio() > velocitaEsercizioFissoMax) setVelocitaEsercizio(-1);
-    else if(Impianto::compareString(getAmmorsamento().toString(), "automatico") && getVelocitaEsercizio() > velocitaEsercizioAutomaticoMax) setVelocitaEsercizio(-1);
+    if(RopewayUtils::compareString(getAmmorsamento().toString(),Ammorsamento::values.at(0).toStdString()) && getVelocitaEsercizio() > velocitaEsercizioFissoMax) setVelocitaEsercizio(-1);
+    else if(RopewayUtils::compareString(getAmmorsamento().toString(),Ammorsamento::values.at(1).toStdString()) && getVelocitaEsercizio() > velocitaEsercizioAutomaticoMax) setVelocitaEsercizio(-1);
 }
 
-
-
-/* Getters e Setters per l'ottenimento e la modifica dei campi della classe cabinovia */
+/**
+ * @brief Cabinovia::getNumeroFuni
+ * @return numeroFuni
+ */
 short Cabinovia::getNumeroFuni() const{
     return numeroFuni;
 }
-void Cabinovia::setNumeroFuni(const short& value){
-    numeroFuni = value;
+
+/**
+ * @brief Cabinovia::setNumeroFuni
+ * @param nf
+ */
+void Cabinovia::setNumeroFuni(const short& nf){
+    numeroFuni = nf;
 }
 
-/* metodo per la clonazione polimorfa */
+/**
+ * @brief Cabinovia::clone
+ * @return Cabinovia pointer
+ *
+ * metodo di clonazione polimorfa
+ */
 Cabinovia* Cabinovia::clone() const {
     return new Cabinovia(*this);
 }
 
-/* metodo per il ritorno del tipo di impianto */
+/**
+ * @brief Cabinovia::getType
+ * @return std::string "cabinovia"
+ */
 string Cabinovia::getType() const{
     return "cabinovia";
 }
 
-/* vedere piu' avanti se implementare */
-unsigned int Cabinovia::PortataOraria() const{
-    return 0; //vedere su funivie.org
-    // trovare distanza veicoli, lunghezza del cavo diviso il numero di seggiole - 1
-    // (3600/distaza veicoli)*velocitaMax*capienzaVeicoli
-}
-
-/* Metodo per la deserializzazione */
-Cabinovia* Cabinovia::read(QXmlStreamReader *reader){
-
-    Impianto::values* r = Impianto::read(reader);
-
-    Amm ammorsamento;
+/**
+ * @brief Cabinovia::build
+ * @param reader
+ * @param r
+ * @return Cabinovia pointer
+ *
+ * metodo che si occupa di costruire un oggetto di classe Cabinovia
+ * deserializzando un file in formato XML
+ * Il metodo viene chiamato dalla classe base, dalla quale vengono
+ * passati i valori radicati nella classe base.
+ * inoltre ritorna un puntatore all'oggetto appena costruito
+ */
+Cabinovia* Cabinovia::build(QXmlStreamReader *reader,const values* r){
+    Ammorsamento ammorsamento;
     short numeroFuni;
-
     if(reader->readNextStartElement() && reader->name()=="Ammorsamento")
         ammorsamento =  reader->readElementText().toStdString();
     if(reader->readNextStartElement() && reader->name()=="NumeroFuni")
         numeroFuni = reader->readElementText().toShort();
-
     return new Cabinovia(r->id,r->immagine,r->nome,r->capienzaVeicolo,r->quotaValle,r->quotaMonte,r->potenzaMotore,r->velocitaEsercizio,
                          r->produttore,r->annoCostruzione,ammorsamento,numeroFuni);
 }
 
+/**
+ * @brief Cabinovia::write
+ * @param writer
+ *
+ * permette la serializzazione in XML di un oggetto di classe cabinovia
+ * richiama il metodo write delle classi superiori per aumentare
+ * l'estendibilita' del codice
+ */
 void Cabinovia::write(QXmlStreamWriter *writer) const{
     MovimentazioneContinua::write(writer);
     writer->writeStartElement("NumeroFuni");
     writer->writeCharacters(QString::number(numeroFuni));
     writer->writeEndElement();
+    writer->writeEndElement();
 }
-
-
-
 
 
 

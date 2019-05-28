@@ -8,21 +8,25 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include "Model/qfilterproxymodel.h"
-#include "Model/qtablemodeladapter.h"
+#include "Model/proxymodel.h"
+#include "Model/modeladapter.h"
 #include "View/Components/tableview.h"
 #include "View/Components/insertropeway.h"
 
+/**
+ * @brief The ViewRopeway class
+ *
+ * View: grafica relativa alla vista degli impianti
+ */
 class ViewRopeway : public QWidget{
 private:
     Q_OBJECT
-    QLineEdit* searchbar;
-    QFilterProxyModel* proxymodel;
-    QTableModelAdapter* model;
-    TableView* view;
-
     QComboBox* searchType;
     QComboBox* searchManufacters;
+
+    ProxyModel* proxymodel;
+    ModelAdapter* model;
+    TableView* view;
 
     QPushButton* removeButton;
     QPushButton* showAllSpec;
@@ -31,21 +35,16 @@ public:
 
     TableView *getView() const;
     QLineEdit *getSearchbar() const;
-    QFilterProxyModel *getProxymodel() const;
-    QTableModelAdapter *getModel() const;
+    ProxyModel *getProxymodel() const;
+    ModelAdapter *getModel() const;
     QPushButton *getRemoveButton() const;
-
 
     QComboBox *getSearchList() const;
     QComboBox *getSearchManufacters() const;
     QPushButton *getShowAllSpec() const;
 
-
     void updateTable() const;
 
-signals:
-
-public slots:
 };
 
 #endif // VIEWROPEWAY_H

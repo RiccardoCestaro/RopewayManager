@@ -1,33 +1,56 @@
 #include "Model/Gerarchia/movimentazionevaevieni.h"
 
+/**
+ * Campo dati statico che contiene il profilo preferenziale
+ * della classe statica MovimentazioneVaeVieni
+ */
+string MovimentazioneVaeVieni::profiloPreferenziale = "Concavo";
 
-MovimentazioneVaeVieni::MovimentazioneVaeVieni(const unsigned short& i, const string& img, const string& nm, const short& c, const unsigned int& qv, const unsigned int& qm,
-                                               const double& pm,const float& ve, const string& pro, const short& ac, const float& tp) :
-    Impianto(i,img,nm,c,qv,qm,pm,ve,pro,ac), tempoPausa(tp) {}
+/**
+ * @brief MovimentazioneVaeVieni::MovimentazioneVaeVieni
+ *
+ * Costruttore della classe MovimentazioneVaeVieni
+ */
+MovimentazioneVaeVieni::MovimentazioneVaeVieni(const unsigned short& i, const string& img, const string& nm, const short& c,
+                                               const unsigned int& qv, const unsigned int& qm, const double& pm,
+                                               const float& ve, const Produttore& pro, const short& ac, const float& tp)
+                                                : Impianto(i,img,nm,c,qv,qm,pm,ve,pro,ac), tempoPausa(tp) {}
 
-/* Ritorna la movimentazione */
+/**
+ * @brief MovimentazioneVaeVieni::getMovimentazione
+ * @return std::string "va e vieni"
+ */
 std::string MovimentazioneVaeVieni::getMovimentazione() const{
     return "Va e Vieni";
 }
 
-
-/* Getters per l'ottenimento dei campi radicati nella classe astratta movimentazioneVaeVieni */
-int MovimentazioneVaeVieni::getTempoPausa() const{
+/**
+ * @brief MovimentazioneVaeVieni::getTempoPausa
+ * @return tempoPausa
+ */
+float MovimentazioneVaeVieni::getTempoPausa() const{
     return tempoPausa;
 }
 
-/* Setters per la modifica dei campi radicati nella classe astratta  movimentazioneVaeVieni */
-void MovimentazioneVaeVieni::setTempoPausa(const int& tp){
+/**
+ * @brief MovimentazioneVaeVieni::setTempoPausa
+ * @param tp
+ */
+void MovimentazioneVaeVieni::setTempoPausa(const float& tp){
     tempoPausa = tp;
 }
 
-/* Imposto il campo statico profiloPreferenziale */
-string MovimentazioneVaeVieni::profiloPreferenziale = "Concavo";
-
-/* Deserializzazione */
+/**
+ * @brief MovimentazioneVaeVieni::write
+ * @param writer
+ *
+ * permette la serializzazione in XML di un oggetto di classe MovimentazioneVaeVieni
+ * richiama il metodo write delle classi superiori per aumentare
+ * l'estendibilita' del codice
+ */
 void MovimentazioneVaeVieni::write(QXmlStreamWriter *writer) const{
     Impianto::write(writer);
     writer->writeStartElement("TempoAttesa");
-    writer->writeCharacters(QString::number(tempoPausa));
+    writer->writeCharacters(QString::number(static_cast<double>(tempoPausa)));
     writer->writeEndElement();
 }
