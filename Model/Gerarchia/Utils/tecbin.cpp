@@ -33,7 +33,7 @@ TecBin::TecBin(const char s[]) :
  * Metodo ritornante la stringa del corrispondente valore booleano
  */
 std::string TecBin::toString() const{
-    return values.takeAt(value).toStdString();
+    return values.at(value).toStdString();
 }
 
 /**
@@ -46,5 +46,5 @@ std::string TecBin::toString() const{
  * stampa dell'oggetto
  */
 std::ostream& operator<<(std::ostream& os, const TecBin& t){
-    return os << t.values.takeAt(t.value).toStdString();
+    return os << t.values.at(t.value).toStdString();
 }

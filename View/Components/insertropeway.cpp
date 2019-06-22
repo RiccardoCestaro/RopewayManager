@@ -569,13 +569,13 @@ void InsertRopeway::showFunicolar() const{
 void InsertRopeway::slotEditType() const{
     defaultForm();
     QString type = comboType->currentText();
-    if ( type == "Sciovia") showSkilift();
-    else if( type == "Seggiovia") showChairLift();
-    else if( type == "Cabinovia") showGondolaLift();
-    else if( type == "Telemix") showTelemix();
-    else if( type == "Funifor") showFunifor();
-    else if( type == "Funivia") showAerialTramway();
-    else if ( type == "Funicolare") showFunicolar();
+    if ( type == "sciovia") showSkilift();
+    else if( type == "seggiovia") showChairLift();
+    else if( type == "cabinovia") showGondolaLift();
+    else if( type == "telemix") showTelemix();
+    else if( type == "funifor") showFunifor();
+    else if( type == "funivia") showAerialTramway();
+    else if ( type == "funicolare") showFunicolar();
 }
 
 /**

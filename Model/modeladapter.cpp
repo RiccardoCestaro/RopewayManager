@@ -104,11 +104,13 @@ QVariant ModelAdapter::data(const QModelIndex& index, int role) const {
         return QVariant();
     switch(role){
         case Qt::BackgroundColorRole:
-            return QVariant(QBrush(QColor(Qt::black)));
+            return QVariant(QBrush(QColor(64,64,64,255)));
         case Qt::TextAlignmentRole:
             return QVariant ( Qt::AlignVCenter | Qt::AlignHCenter );
         case Qt::SizeHintRole:
             return QSize( 500, 0 );
+        case Qt::TextColorRole:
+            return QVariant(QBrush(QColor(Qt::white)));
         case Qt::DisplayRole:
         {
             switch(index.column())
@@ -148,7 +150,7 @@ bool ModelAdapter::insertRows(int begin, int count, const QModelIndex& parent) {
     beginInsertRows(parent, begin, begin + count - 1);
     std::string s = insert->getCurrentType().toStdString();
 
-    if ( s == "Seggiovia"){
+    if ( s == "seggiovia"){
         model->add(new Seggiovia(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                  static_cast<short>(insert->getSpinCapacity()->value()),static_cast<unsigned int>(insert->getSpinHeightValley()->value()),
                                  static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),insert->getSpinEnginePower()->value(),
@@ -156,38 +158,38 @@ bool ModelAdapter::insertRows(int begin, int count, const QModelIndex& parent) {
                                  static_cast<short>(insert->getSpinYearOfConstruction()->value()),insert->getComboDetachable()->currentText().toStdString(),insert->getCheckBoxCoverage()->isChecked(),
                                  insert->getCheckBoxSkiRests()->isChecked()));
 
-    }else if ( s == "Cabinovia"){
+    }else if ( s == "cabinovia"){
         model->add(new Cabinovia(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                  static_cast<short>(insert->getSpinCapacity()->value()),static_cast<unsigned int>(insert->getSpinHeightValley()->value()),
                                  static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),insert->getSpinEnginePower()->value(),
                                  insert->getSpinDrivingSpeedLine()->value(),insert->getEditManufacter()->currentText().toStdString(),
                                  static_cast<short>(insert->getSpinYearOfConstruction()->value()),insert->getComboDetachable()->currentText().toStdString(),static_cast<short>(insert->getSpinRopeNumber()->value())));
-    }else if ( s == "Telemix"){
+    }else if ( s == "telemix"){
         model->add(new Telemix(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                static_cast<short>(insert->getSpinCapacity()->value()),static_cast<short>(insert->getSpinCabinCapacity()->value()),
                                static_cast<unsigned int>(insert->getSpinHeightValley()->value()), static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),
                                insert->getSpinEnginePower()->value(), insert->getSpinDrivingSpeedLine()->value(),insert->getEditManufacter()->currentText().toStdString(),
                                static_cast<short>(insert->getSpinYearOfConstruction()->value()), insert->getCheckBoxCoverage()->isChecked(),insert->getCheckBoxSkiRests()->isChecked()));
-    }else if ( s == "Sciovia"){
+    }else if ( s == "sciovia"){
         string gancio = insert->getComboHook()->currentText().toStdString();
         model->add(new Sciovia(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                static_cast<unsigned int>(insert->getSpinHeightValley()->value()), static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),
                                insert->getSpinEnginePower()->value(), insert->getSpinDrivingSpeedLine()->value(),insert->getEditManufacter()->currentText().toStdString(),
                                static_cast<short>(insert->getSpinYearOfConstruction()->value()),gancio));
-    }else if ( s == "Funivia"){
+    }else if ( s == "funivia"){
         model->add(new Funivia(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                static_cast<short>(insert->getSpinCapacity()->value()),static_cast<unsigned int>(insert->getSpinHeightValley()->value()),
                                static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),insert->getSpinEnginePower()->value(),
                                insert->getSpinDrivingSpeedLine()->value(),insert->getEditManufacter()->currentText().toStdString(),
                                static_cast<short>(insert->getSpinYearOfConstruction()->value()),insert->getSpinTime()->value()));
-    }else if ( s == "Funifor"){
+    }else if ( s == "funifor"){
         model->add(new Funifor(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                static_cast<short>(insert->getSpinCapacity()->value()),static_cast<unsigned int>(insert->getSpinHeightValley()->value()),
                                static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),insert->getSpinEnginePower()->value(),
                                insert->getSpinDrivingSpeedLine()->value(),insert->getEditManufacter()->currentText().toStdString(),
                                static_cast<short>(insert->getSpinYearOfConstruction()->value()),insert->getSpinTime()->value(),
                                static_cast<short>(insert->getComboCabinNumber()->currentIndex())));
-    }else if ( s == "Funicolare"){
+    }else if ( s == "funicolare"){
         model->add(new Funicolare(static_cast<unsigned short>(insert->getSpinId()->value()),insert->getImageBytes().toBase64().toStdString(),insert->getEditName()->text().toStdString(),
                                   static_cast<short>(insert->getSpinCapacity()->value()),static_cast<unsigned int>(insert->getSpinHeightValley()->value()),
                                   static_cast<unsigned int>(insert->getSpinHeightMountain()->value()),insert->getSpinEnginePower()->value(),

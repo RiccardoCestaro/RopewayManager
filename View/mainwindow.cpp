@@ -172,6 +172,7 @@ void MainWindow::add() const{
     viewPage->getView()->clearSelection();
     viewPage->getView()->selectionModel()->clearCurrentIndex();
     viewPage->getView()->selectionModel()->select(viewPage->getProxymodel()->index(viewPage->getModel()->rowCount() - 1, 0), QItemSelectionModel::Select);
+    viewPage->updateTable();
 }
 
 /**

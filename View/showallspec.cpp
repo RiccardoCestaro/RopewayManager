@@ -285,21 +285,21 @@ void ShowAllSpec::saveSettings(){
     p->setCapienzaVeicolo(static_cast<short>(spinCapacity->value()));
     if(p->getMovimentazione()=="Continua"){
         MovimentazioneContinua* mc = static_cast<MovimentazioneContinua*>(p);
-        mc->setAmmorsamento(comboDetachable->currentIndex() == 1 ? string("automatico") : string("fisso"));
 
         if(p->getType()=="seggiovia"){
+            mc->setAmmorsamento(comboDetachable->currentIndex() == 1 ? string("automatico") : string("fisso"));
             Seggiovia* s = dynamic_cast<Seggiovia*>(p);
             s->setCopertura(checkBoxCoverage->isChecked());
             s->setAppoggiaSci(checkBoxSkiRests->isChecked());
 
         }else if(p->getType()=="cabinovia"){
+            mc->setAmmorsamento(comboDetachable->currentIndex() == 1 ? string("automatico") : string("fisso"));
             Cabinovia* c = dynamic_cast<Cabinovia*>(p);
             c->setNumeroFuni(static_cast<short>(spinRopeNumber->value()));
 
         }else if(p->getType()=="telemix"){
+            mc->setAmmorsamento(comboDetachable->currentIndex() == 1 ? string("automatico") : string("fisso"));
             Telemix* t = dynamic_cast<Telemix*>(p);
-            t->setCopertura(checkBoxCoverage->isChecked());
-            t->setAppoggiaSci(checkBoxSkiRests->isChecked());
             t->setCapienzaCabina(static_cast<short>(spinCabinCapacity->value()));
 
         }else if (p->getType()=="sciovia"){

@@ -12,7 +12,8 @@
  */
 Telemix::Telemix(const unsigned short& i, const string& img, const string& nm, const short& cs,const short& cc, const unsigned int& qv,
                  const unsigned int& qm, const double& pm, const float& ve, const Produttore& pro, const short& ac, const bool& c, const bool& as) :
-            Seggiovia(i,img,nm,cs,qv,qm,pm,ve,pro,ac,string("automatico"),c,as), Cabinovia(i,img,nm,cc,qv,qm,pm,ve,pro,ac,string("automatico"),1){
+            MovimentazioneContinua(i,img,nm,c,qv,qm,pm,ve,pro,ac,"automatico"),
+            Seggiovia(i,img,nm,cs,qv,qm,pm,ve,pro,ac,"automatico",c,as), Cabinovia(i,img,nm,cc,qv,qm,pm,ve,pro,ac,"automatico",1){
     if(getVelocitaEsercizio() > Seggiovia::velocitaEsercizioAutomaticoMax) setVelocitaEsercizio(-1);
 }
 
