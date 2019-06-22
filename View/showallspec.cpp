@@ -35,7 +35,7 @@
  * @param e
  * @param parent
  *
- * Costruttore della classe ShowAllSPec
+ * Costruttore della classe ShowAllSpec
  */
 ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e, QWidget* parent) :
     QWidget(parent),
@@ -125,7 +125,7 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
     formLayout->addRow(new QLabel("Id: "),spinId);
 
     editName = new QLineEdit(this);
-    /* Creating validator for QLineEdit using regex*/
+
     QRegExp rx("(\\w+\\s)+");
     QRegExpValidator *validator = new QRegExpValidator(rx, this);
     editName->setValidator(validator);
@@ -175,11 +175,13 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
     if(p->getMovimentazione()=="Continua"){
         MovimentazioneContinua* mc = static_cast<MovimentazioneContinua*>(p);
 
-        comboDetachable = new QComboBox(this);
-        comboDetachable->addItems(Ammorsamento::values);
+        if(p->getType()!="sciovia"){
+            comboDetachable = new QComboBox(this);
+            comboDetachable->addItems(Ammorsamento::values);
 
-        comboDetachable->setCurrentText(QString::fromStdString(mc->getAmmorsamento().toString()));
-        formLayout->addRow(new QLabel("Ammorsamento: "),comboDetachable);
+            comboDetachable->setCurrentText(QString::fromStdString(mc->getAmmorsamento().toString()));
+            formLayout->addRow(new QLabel("Ammorsamento: "),comboDetachable);
+        }
 
         if(p->getType()=="seggiovia"){
             Seggiovia* s = dynamic_cast<Seggiovia*>(p);
@@ -223,7 +225,7 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
         spinTime = new QSpinBox(this);
         spinTime->setRange(0,3600);
         spinTime->setSuffix("s");
-        spinTime->setValue(vev->getTempoPausa());
+        spinTime->setValue(static_cast<int>(vev->getTempoPausa()));
         formLayout->addRow(new QLabel("Tempo Attesa: "),spinTime);
 
         if(p->getType()=="funifor"){
@@ -257,6 +259,13 @@ ShowAllSpec::ShowAllSpec(Impianto* _p,const QModelIndex& b, const QModelIndex& e
     connect(spinHeightValley,SIGNAL(valueChanged(int)),this,SLOT(slotEditValleyMetres()));
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
 }
+
+
+/**
+ * @brief ShowAllSpec::saveSettings
+ *
+ * salva le modifiche effettuate
+ */
 void ShowAllSpec::saveSettings(){
 
     p->setId(static_cast<unsigned short>(spinId->value()));

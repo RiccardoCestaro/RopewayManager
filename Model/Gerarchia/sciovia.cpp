@@ -1,5 +1,5 @@
 #include "Model/Gerarchia/sciovia.h"
-#include "invalidstringtoenumexception.h"
+#include "Model/invalidstringtoenumexception.h"
 
 
 /**

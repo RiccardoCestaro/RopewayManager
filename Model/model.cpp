@@ -1,5 +1,5 @@
 #include "model.h"
-#include "xmlio.h"
+#include "io.h"
 #include <algorithm>
 #include <QDebug>
 
@@ -84,4 +84,5 @@ Impianto* Model::getRopeway(unsigned int i) const{
 void Model::erase(){
     contenitore.clear();
 }
+
 

@@ -1,5 +1,5 @@
 #include "Model/Gerarchia/movimentazionecontinua.h"
-#include "invalidstringtoenumexception.h"
+#include "Model/invalidstringtoenumexception.h"
 
 /**
  * Campo dati statico che contiene il profilo preferenziale della

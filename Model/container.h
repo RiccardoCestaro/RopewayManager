@@ -821,7 +821,7 @@ typename Container<T>::iterator::reference Container<T>::iterator::operator*() c
  */
 template<class T>
 typename Container<T>::iterator::pointer Container<T>::iterator::operator->() const {
-    return &I;
+    return I;
 }
 
 /**
@@ -1095,7 +1095,7 @@ typename Container<T>::const_iterator::const_reference Container<T>::const_itera
  */
 template<class T>
 typename Container<T>::const_iterator::const_pointer Container<T>::const_iterator::operator->() const {
-    return &cI;
+    return cI;
 }
 
 /**

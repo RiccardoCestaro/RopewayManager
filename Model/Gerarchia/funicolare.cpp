@@ -1,5 +1,5 @@
 #include "Model/Gerarchia/funicolare.h"
-#include "invalidstringtoenumexception.h"
+#include "Model/invalidstringtoenumexception.h"
 #include <iostream>
 
 #include <string>

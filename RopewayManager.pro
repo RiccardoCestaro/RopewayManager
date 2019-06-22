@@ -38,10 +38,10 @@ HEADERS += Model/Gerarchia/Utils/ammorsamento.h \
            Model/Gerarchia/funifor.h \
            Model/container.h \
            Model/deepptr.h \
+           Model/io.h \
            Model/model.h \
            Model/modeladapter.h \
            Model/proxymodel.h \
-           Model/xmlio.h \
            Model/invalidstringtoenumexception.h \
            View/Components/insertropeway.h \
            View/Components/tabbar.h \
@@ -69,10 +69,10 @@ SOURCES += Model/Gerarchia/Utils/ammorsamento.cpp \
            Model/Gerarchia/funivia.cpp \
            Model/Gerarchia/funicolare.cpp \
            Model/Gerarchia/funifor.cpp \
+           Model/io.cpp \
            Model/model.cpp \
            Model/modeladapter.cpp \
            Model/proxymodel.cpp \
-           Model/xmlio.cpp \
            Model/invalidstringtoenumexception.cpp \
            View/Components/insertropeway.cpp \
            View/Components/tabbar.cpp \
